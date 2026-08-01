@@ -1,0 +1,38 @@
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Werkzeug==3.0.3
+reportlab==4.0.7
+python-dateutil==2.8.2
+
+# Security & Performance
+Flask-WTF==1.2.1
+Flask-Limiter==3.5.0
+Flask-Compress==1.14
+Flask-Migrate==4.0.5
+
+# Error Tracking (Optional - set SENTRY_DSN in .env)
+sentry-sdk[flask]==1.40.0
+
+# ============================================
+# Blockchain & Crypto (Week 1-2)
+# ============================================
+# Web3.py for Ethereum/Polygon blockchain interaction
+web3==6.11.3
+
+# Solidity compiler for smart contract compilation
+py-solc-x==2.0.2
+
+# Ethereum account management
+eth-account==0.10.0
+
+# Cryptography library for AES-256 encryption
+cryptography==41.0.7
+
+# ============================================
+# IPFS Storage (Week 3-4)
+# ============================================
+# Pinata Python SDK for IPFS pinning
+pinata-py==0.2.0
+
+# HTTP library for IPFS gateway access
+requests==2.31.0

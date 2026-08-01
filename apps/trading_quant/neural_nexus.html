@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Cache busting: voorkomt dat Android Chrome oude CSS/JS versies hergebruikt -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Nexus Ultra // 3D S26 Command</title>
+    
+    <!-- Google Fonts, FontAwesome & Chart.js -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- v20260722-1349 = cache buster timestamp, update bij elke deployment -->
+    <link rel="stylesheet" href="styles/dashboard.css?v=20260722-1349">
+    <style>
+        :root {
+            /* Futuristic tailored gradient theme overrides */
+            --bg-color: #030008;
+            --panel-bg: rgba(10, 5, 20, 0.65);
+            --panel-border: rgba(139, 92, 246, 0.15);
+            --panel-border-active: rgba(56, 189, 248, 0.8);
+            
+            --color-primary: #8b5cf6; /* Sleek Purple */
+            --color-accent: #0ea5e9; /* Light Cyan */
+            --color-success: #10b981;
+            
+            --glow-indigo: 0 0 35px rgba(139, 92, 246, 0.35);
+            --glow-cyan: 0 0 35px rgba(14, 165, 233, 0.35);
+        }
+        
+        /* Modernized look: Sleeker glassmorphic cards */
+        .widget-card {
+            border-radius: 20px;
+            border: 1px solid var(--panel-border);
+            background: rgba(10, 5, 25, 0.88);
+            /* backdrop-filter verwijderd: Android Chrome rendering issue */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255,255,255,0.05);
+            transition: border-color 0.35s ease;
+        }
+        
+        .widget-card:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateY(-2px) scale(1.01) !important;
+            box-shadow: 0 15px 45px rgba(139, 92, 246, 0.15), 0 10px 40px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Top Navigation bar overhaul */
+        .top-nav-bar {
+            background: rgba(3, 0, 8, 0.97);
+            /* backdrop-filter verwijderd: Android Chrome stacking context bug */
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+        }
+        
+        /* Premium navigation dock styling */
+        .bottom-nav {
+            background: rgba(3, 0, 8, 0.97);
+            /* backdrop-filter verwijderd: Android Chrome stacking context bug */
+            border-top: 1px solid rgba(139, 92, 246, 0.1);
+            height: 72px;
+        }
+        
+        .nav-button.active i {
+            text-shadow: 0 0 15px var(--color-primary);
+            color: var(--color-primary);
+        }
+        
+        .nav-button.active {
+            color: var(--color-primary);
+        }
+        
+        /* High-tech glow badges */
+        .badge-status-glow {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 8px currentColor;
+        }
+        
+        .badge-status-glow.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+        
+        .badge-status-glow.error {
+            background: rgba(244, 63, 94, 0.1);
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+        }
+        
+        /* Responsive Top Quick-Tab Navigation Strip */
+        .top-tab-strip {
+            display: flex;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(3, 0, 8, 0.97);
+            /* backdrop-filter verwijderd: Android Chrome stacking context bug */
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            overflow-x: auto;
+            white-space: nowrap;
+            z-index: 90;
+            scrollbar-width: thin;
+        }
+
+        .top-tab-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 6px 14px;
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            flex-shrink: 0;
+        }
+
+        .top-tab-btn:hover, .top-tab-btn.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(56, 189, 248, 0.3));
+            border-color: rgba(56, 189, 248, 0.7);
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Desktop Responsive Overhaul (Microsoft Edge & Large Displays) */
+        @media (min-width: 992px) {
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                padding: 20px 0;
+            }
+
+            .phone-container {
+                max-width: 1400px !important;
+                height: calc(100vh - 40px) !important;
+                border-radius: 24px;
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85);
+                overflow: hidden;
+            }
+
+            .tab-panel.active {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+                width: 100% !important;
+            }
+
+            .mobile-grid-2 {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 16px !important;
+            }
+
+            .bottom-nav {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Holographic grid in bottom background -->
+    <div class="hologram-grid-bg"></div>
+
+    <!-- Interactive 3D Nebula Background Canvas (fixed achtergrond, buiten phone-container) -->
+    <canvas id="nebula-3d-canvas"></canvas>
+
+    <div class="phone-container">
+        
+        <!-- Top Nav AMOLED Bar -->
+        <nav class="top-nav-bar">
+            <div class="brand-title">
+                <i class="fa-solid fa-compass"></i>
+                <div>
+                    <h1>Nexus Ultra</h1>
+                </div>
+            </div>
+            
+            <div class="device-telemetry">
+                <!-- High-Tech Audio FX toggle -->
+                <div class="telemetry-item" id="audio-toggle-btn" onclick="toggleAudioFX()" style="cursor:pointer; padding: 4px;" title="Audio FX Toggle">
+                    <i class="fa-solid fa-volume-xmark" id="audio-icon" style="color:var(--text-muted); font-size:1.1rem; transition:color 0.2s;"></i>
+                </div>
+                <div class="telemetry-item">
+                    <i class="fa-solid fa-wifi" style="color:var(--color-accent);"></i>
+                    <span>5G</span>
+                </div>
+                <div class="telemetry-item">
+                    <i class="fa-solid fa-battery-three-quarters" id="bat-icon" style="color:var(--color-success);"></i>
+                    <span id="bat-level">--%</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Top Quick-Tab Navigation Strip (Always visible for Edge Desktop & Galaxy S26 Mobile) -->
+        <div class="top-tab-strip">
+            <button class="top-tab-btn active" data-tab="overview" onclick="switchMobileTab('overview')"><i class="fa-solid fa-house"></i> Home</button>
+            <button class="top-tab-btn" data-tab="aiagency" onclick="switchMobileTab('aiagency')"><i class="fa-solid fa-robot" style="color:var(--color-success);"></i> AI Agency</button>
+            <button class="top-tab-btn" data-tab="todo" onclick="switchMobileTab('todo')"><i class="fa-solid fa-list-check" style="color:var(--color-success);"></i> To-Do</button>
+            <button class="top-tab-btn" data-tab="collab" onclick="switchMobileTab('collab')"><i class="fa-solid fa-users" style="color:var(--color-accent);"></i> Collab</button>
+            <button class="top-tab-btn" data-tab="sniper" onclick="switchMobileTab('sniper')"><i class="fa-solid fa-crosshairs" style="color:var(--color-accent);"></i> Sniper</button>
+            <button class="top-tab-btn" data-tab="solana" onclick="switchMobileTab('solana')"><i class="fa-solid fa-coins" style="color:#a855f7;"></i> Solana Bot</button>
+            <button class="top-tab-btn" data-tab="greenwheels" onclick="switchMobileTab('greenwheels')"><i class="fa-solid fa-car" style="color:#eab308;"></i> Greenwheels</button>
+            <button class="top-tab-btn" data-tab="cortex" onclick="switchMobileTab('cortex')"><i class="fa-solid fa-circle-nodes"></i> Cortex</button>
+            <button class="top-tab-btn" data-tab="security" onclick="switchMobileTab('security')"><i class="fa-solid fa-shield-halved" style="color:#ef4444;"></i> Security</button>
+            <button class="top-tab-btn" data-tab="spen" onclick="switchMobileTab('spen')"><i class="fa-solid fa-pen-nib"></i> S Pen</button>
+            <button class="top-tab-btn" data-tab="terminal" onclick="switchMobileTab('terminal')"><i class="fa-solid fa-terminal"></i> Console</button>
+            <button class="top-tab-btn" data-tab="processes" onclick="switchMobileTab('processes')"><i class="fa-solid fa-microchip"></i> Processes</button>
+            <button class="top-tab-btn" data-tab="models" onclick="switchMobileTab('models')"><i class="fa-solid fa-brain"></i> Registry</button>
+            <button class="top-tab-btn" data-tab="settings" onclick="switchMobileTab('settings')"><i class="fa-solid fa-sliders"></i> Settings</button>
+        </div>
+
+        <!-- Dynamic Content Viewport -->
+        <div class="workspace-viewport" id="viewport">
+            
+            <!-- TAB 1: OVERVIEW (CLEAN SAAS WIDGETS WITH 3D DEPTH) -->
+            <div id="overview" class="tab-panel active">
+                
+                <!-- Holographic 3D Neural Core -->
+                <div class="widget-card tilt-target" style="text-align:center; padding: 12px 20px;">
+                    <div class="widget-header" style="margin-bottom:6px;">
+                        <span>Quantum Neural Core // Telemetry Response</span>
+                        <i class="fa-solid fa-brain" style="color:var(--color-accent);"></i>
+                    </div>
+                    <div style="display:flex; justify-content:center; align-items:center; height:150px;">
+                        <canvas id="neural-core-canvas" width="300" height="150" style="background:transparent;"></canvas>
+                    </div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">
+                        Status: <strong style="color:var(--color-accent);" id="neural-core-status">Core Active</strong>
+                    </div>
+                </div>
+
+                <div class="mobile-grid-2">
+                    <div class="widget-card tilt-target" onclick="vibrateDevice([10])">
+                        <div class="card-inner-depth">
+                            <div class="widget-header">
+                                <span>Systeem Health</span>
+                                <i class="fa-solid fa-heart-pulse" style="color:var(--color-success);"></i>
+                            </div>
+                            <div class="widget-value" style="color:var(--color-success);">98%</div>
+                            <div class="widget-subtext">All nodes clear</div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget-card tilt-target" onclick="vibrateDevice([10])">
+                        <div class="card-inner-depth">
+                            <div class="widget-header">
+                                <span>Netwerk Latency</span>
+                                <i class="fa-solid fa-gauge"></i>
+                            </div>
+                            <div class="widget-value" id="val-latency">42 ms</div>
+                            <div class="widget-subtext">Contabo VPS status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-card tilt-target">
+                    <div class="card-inner-depth">
+                        <div class="widget-header">
+                            <span>S26 CPU & Memory Telemetry</span>
+                            <i class="fa-solid fa-chart-area"></i>
+                        </div>
+                        <div style="height: 140px; margin-top: 10px;">
+                            <canvas id="overview-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-card tilt-target">
+                    <div class="card-inner-depth">
+                        <div class="widget-header">
+                            <span>Foresight Security Status</span>
+                            <i class="fa-solid fa-shield-halved" style="color:var(--color-success);"></i>
+                        </div>
+                        <div style="font-size:0.85rem; line-height:1.45; color:var(--text-muted);">
+                            VPS Shield: <strong style="color:#fff;">ARMORED</strong>. Fail2ban en SSH brute-force preventie actief op poort 2222.
+                        </div>
+                    </div>
+                </div>
+
+                <button class="action-button primary" onclick="triggerSystemHardening()"><i class="fa-solid fa-shield-halved"></i> Start Systeem Harden</button>
+            </div>
+
+            <!-- TAB 2: CORTEX GRAPH (TACTILE DRAG) -->
+            <div id="cortex" class="tab-panel">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Cortex Graaf Commandocenter</span>
+                        <i class="fa-solid fa-circle-nodes" style="color:var(--color-accent);"></i>
+                    </div>
+                    <div id="cortex-drag-space" style="height: 350px;">
+                        <svg id="cortex-canvas-lines"></svg>
+                        <!-- Node elements injected -->
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:14px;">
+                        <button class="action-button" onclick="promptAddNode()"><i class="fa-solid fa-plus-circle"></i> Add Node</button>
+                    </div>
+                </div>
+
+                <!-- Cortex Node Detail Paneel (Schuift in) -->
+                <div class="widget-card" id="cortex-detail-panel" style="display:none; margin-top:15px; border-color: var(--color-primary); background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(56, 189, 248, 0.06)); box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);">
+                    <div class="widget-header" style="border-bottom: 1px solid rgba(139, 92, 246, 0.2); padding-bottom: 8px; margin-bottom: 12px;">
+                        <span id="cortex-detail-title" style="font-size: 1.1rem; font-weight: 800; color: #fff; text-transform: uppercase;">Node Details</span>
+                        <span id="cortex-detail-badge" class="badge-status-glow success">Online</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; font-size:0.8rem;">
+                        <div>
+                            <span style="color: var(--text-muted);">Beschrijving:</span>
+                            <p id="cortex-detail-desc" style="color: #fff; margin-top: 4px; line-height: 1.45;"></p>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:5px; background: rgba(255,255,255,0.01); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
+                            <div>
+                                <span style="color: var(--text-muted);">Type:</span>
+                                <strong id="cortex-detail-type" style="color:var(--color-accent); text-transform:uppercase; margin-left: 5px;">-</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-muted);">Systeem IP:</span>
+                                <strong id="cortex-detail-ip" style="color:#fff; margin-left: 5px;">-</strong>
+                            </div>
+                        </div>
+                        
+                        <!-- Dynamische actie knoppen -->
+                        <div id="cortex-detail-actions" style="margin-top: 12px; display:flex; gap:10px;">
+                            <!-- Knoppen worden dynamisch geïnjecteerd -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: QUANTUM SNIPER (MOBILE PREDICTOR) -->
+            <div id="sniper" class="tab-panel">
+                <!-- Live Scoreboard Widget -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Live Scoreboard (Quantum Sniper)</span>
+                        <i class="fa-solid fa-tower-broadcast" style="color:var(--color-danger);"></i>
+                    </div>
+                    <div class="livescore-container" id="livescore-feed">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Live scores laden...</div>
+                    </div>
+                </div>
+
+                <!-- Quantum Match Calculator & Variables -->
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.04), rgba(56, 189, 248, 0.04)); border-color: rgba(99, 102, 241, 0.25);">
+                    <div class="widget-header">
+                        <span>Quantum Match Predictor Engine v4.5</span>
+                        <i class="fa-solid fa-crosshairs" style="color:var(--color-accent); text-shadow: var(--glow-cyan);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Configureer de 7 Quantum variabelen en de Shadow Score om wiskundige Dixon-Coles & Random Forest resultaten te genereren.
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+                        <div style="display:flex; gap:10px;">
+                            <div style="width:50%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Thuis Team</label>
+                                <input type="text" id="calc-home" value="Manchester City" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                            <div style="width:50%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Uit Team</label>
+                                <input type="text" id="calc-away" value="Real Madrid" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:10px;">
+                            <div style="width:25%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Odds Thuis (H)</label>
+                                <input type="number" step="0.01" min="1.01" id="odds-home" value="2.10" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                            <div style="width:25%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Odds Gelijk (X)</label>
+                                <input type="number" step="0.01" min="1.01" id="odds-draw" value="3.40" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                            <div style="width:25%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Odds Uit (A)</label>
+                                <input type="number" step="0.01" min="1.01" id="odds-away" value="3.20" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                            <div style="width:25%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Bankroll (€)</label>
+                                <input type="number" step="1" min="1" id="bankroll" value="100" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                        </div>
+
+                        <!-- 7 Quantum Variables Sliders Grid -->
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:8px;">
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Thuis Alpha (Goals):</span>
+                                    <strong id="val-h-alpha" style="color:#fff;">1.8</strong>
+                                </label>
+                                <input type="range" id="calc-h-alpha" min="5" max="35" value="18" oninput="document.getElementById('val-h-alpha').textContent = (this.value/10).toFixed(1)" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Uit Alpha (Goals):</span>
+                                    <strong id="val-a-alpha" style="color:#fff;">1.3</strong>
+                                </label>
+                                <input type="range" id="calc-a-alpha" min="5" max="35" value="13" oninput="document.getElementById('val-a-alpha').textContent = (this.value/10).toFixed(1)" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Venue Heat (Fans):</span>
+                                    <strong id="val-heat" style="color:#fff;">40%</strong>
+                                </label>
+                                <input type="range" id="calc-heat" min="0" max="100" value="40" oninput="document.getElementById('val-heat').textContent = this.value + '%'" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Weersfactor:</span>
+                                    <strong id="val-weather" style="color:#fff;">20%</strong>
+                                </label>
+                                <input type="range" id="calc-weather" min="0" max="100" value="20" oninput="document.getElementById('val-weather').textContent = this.value + '%'" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Scheidsrechter Bias:</span>
+                                    <strong id="val-ref" style="color:#fff;">50%</strong>
+                                </label>
+                                <input type="range" id="calc-ref" min="0" max="100" value="50" oninput="document.getElementById('val-ref').textContent = this.value + '%'" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Aanvalsstijl (Style):</span>
+                                    <strong id="val-style" style="color:#fff;">60%</strong>
+                                </label>
+                                <input type="range" id="calc-style" min="0" max="100" value="60" oninput="document.getElementById('val-style').textContent = this.value + '%'" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Agressie / Fouten:</span>
+                                    <strong id="val-agg" style="color:#fff;">50%</strong>
+                                </label>
+                                <input type="range" id="calc-agg" min="0" max="100" value="50" oninput="document.getElementById('val-agg').textContent = this.value + '%'" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                                    <span>Shadow Score:</span>
+                                    <strong id="val-shadow" style="color:#fff;">0.0</strong>
+                                </label>
+                                <input type="range" id="calc-shadow" min="-10" max="10" value="0" oninput="document.getElementById('val-shadow').textContent = (this.value/10).toFixed(1)" style="width:100%; accent-color:var(--color-accent); margin-top:4px;">
+                            </div>
+                        </div>
+
+                        <button class="action-button primary" onclick="runMobilePrediction()" style="margin-top:8px; background: linear-gradient(135deg, var(--color-accent), #4f46e5); border:none;"><i class="fa-solid fa-calculator"></i> Bereken Quantum Predictie</button>
+                    </div>
+                </div>
+
+                <!-- Vier Blokken Predictie Rapport -->
+                <div class="widget-card" id="pred-card" style="display:none; border-color: rgba(56, 189, 248, 0.3); background: rgba(4, 4, 8, 0.85);">
+                    <div class="widget-header">
+                        <span>Predictie Rapport (Vier Blokken Protocol)</span>
+                        <span class="badge" style="background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); color:var(--color-accent);">ML Validated</span>
+                    </div>
+
+                    <!-- Blok I: Absolute Score Predictions -->
+                    <div style="margin-top:12px; padding:12px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px;"><i class="fa-solid fa-chart-line"></i> Blok I: Absolute Score Predictions</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-size:1.8rem; font-weight:800; color:#fff;" id="pred-score">2.0 - 1.3</div>
+                                <div style="font-size:0.7rem; color:var(--text-muted);" id="pred-exp-score">Verwachte Goals (Expected Goals)</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:0.8rem; font-weight:700; color:#fff;" id="pred-1x2">Home: 52% | Draw: 22% | Away: 26%</div>
+                                <div style="font-size:0.75rem; color:var(--color-accent); font-weight:800; margin-top:2px;" id="pred-over25">Over 2.5 Goals: 58%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blok II: The Indestructible -->
+                    <div style="margin-top:10px; padding:12px; border-radius:10px; background:rgba(16,185,129,0.03); border:1px solid rgba(16,185,129,0.15);">
+                        <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--color-success); margin-bottom:6px;"><i class="fa-solid fa-shield-halved"></i> Blok II: The Indestructible (Safety Tier)</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="font-size:0.85rem; color:#fff;" id="pred-safety">Home win of Draw (1X)</strong>
+                            <span style="font-size:0.7rem; color:var(--color-success); font-weight:800; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:6px; padding:2px 6px;">Max €10 Inzet</span>
+                        </div>
+                    </div>
+
+                    <!-- Blok III: The Value Hunter -->
+                    <div style="margin-top:10px; padding:12px; border-radius:10px; background:rgba(56,189,248,0.03); border:1px solid rgba(56,189,248,0.15);">
+                        <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--color-accent); margin-bottom:6px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Blok III: The Value Hunter (Micro-Market Edge)</div>
+                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; text-align:center; font-size:0.75rem;">
+                            <div style="background:rgba(255,255,255,0.02); padding:6px; border-radius:6px;">
+                                <div style="color:var(--text-muted); font-size:0.65rem;">Corners</div>
+                                <strong style="color:#fff;" id="pred-corners">>9.5</strong>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.02); padding:6px; border-radius:6px;">
+                                <div style="color:var(--text-muted); font-size:0.65rem;">Kaarten</div>
+                                <strong style="color:#fff;" id="pred-cards">>4.5</strong>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.02); padding:6px; border-radius:6px;">
+                                <div style="color:var(--text-muted); font-size:0.65rem;">Schoten</div>
+                                <strong style="color:#fff;" id="pred-sot">>8.5</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blok IV: The Moonshot Gallery -->
+                    <div style="margin-top:10px; padding:12px; border-radius:10px; background:rgba(139,92,246,0.03); border:1px solid rgba(139,92,246,0.15);">
+                        <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color: #a78bfa; margin-bottom:6px;"><i class="fa-solid fa-rocket"></i> Blok IV: The Moonshot Gallery (BetBuilders)</div>
+                        <div style="font-size:0.8rem; color:#fff; font-weight:700; line-height:1.4;" id="pred-moonshot">
+                            Home Win + Corners >9.5 + Kaarten >4.5 (Odds: 12.50)
+                        </div>
+                    </div>
+
+                    <!-- Blok V: Kelly Criterion Value Optimizer -->
+                    <div style="margin-top:10px; padding:12px; border-radius:10px; background:rgba(245,158,11,0.03); border:1px solid rgba(245,158,11,0.25);">
+                        <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--color-warning); margin-bottom:6px;"><i class="fa-solid fa-coins"></i> Blok V: Kelly Criterion Value Optimizer</div>
+                        <div style="display:flex; flex-direction:column; gap:8px;" id="pred-kelly-container">
+                            <!-- Dynamisch ingevuld via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Poisson score probability heatmap -->
+                <div class="widget-card" id="poisson-card" style="display:none; background:rgba(4,4,8,0.85); border-color:rgba(56, 189, 248, 0.15);">
+                    <div class="widget-header">
+                        <span>Poisson Probability Matrix</span>
+                        <i class="fa-solid fa-table-cells" style="color:var(--color-accent);"></i>
+                    </div>
+                    <div style="display:flex; justify-content:center; align-items:center; height:180px; margin-top:10px;">
+                        <canvas id="poisson-canvas" width="280" height="160" style="background:transparent;"></canvas>
+                    </div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); text-align:center; margin-top:6px;">
+                        Matrix toont waarschijnlijkheid per uitslag (Home vs Away goals)
+                    </div>
+                </div>
+
+                <!-- Model Performance & ROI tracker -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Quantum Backtest & Performance Tracker</span>
+                        <i class="fa-solid fa-chart-column" style="color:var(--color-success);"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px; font-size:0.75rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:8px;">
+                            <span>Premier League ROI</span>
+                            <strong style="color:var(--color-success);">+436% (11 ritten)</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:8px;">
+                            <span>Bundesliga ROI (Megalodon)</span>
+                            <strong style="color:var(--color-success);">+585% (11 ritten)</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:8px;">
+                            <span>Eredivisie ROI</span>
+                            <strong style="color:var(--color-success);">+309% (10 ritten)</strong>
+                        </div>
+                    </div>
+                    <!-- Quantum Backtest Chart -->
+                    <div style="margin-top: 15px; position: relative; height: 160px; width: 100%;">
+                        <canvas id="sniper-roi-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: S PEN CANVAS (OUT OF THE BOX MINDMAP & NOTES) -->
+            <div id="spen" class="tab-panel">
+                <div class="widget-card" style="padding:14px;">
+                    <div class="widget-header">
+                        <span>S Pen Mindmap & Sketchpad</span>
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <div class="spen-canvas-box">
+                        <canvas id="spen-canvas"></canvas>
+                        
+                        <div class="spen-toolbar">
+                            <div class="spen-tool-group">
+                                <button class="spen-btn active" id="spen-pen" onclick="setSpenTool('pen')"><i class="fa-solid fa-pen"></i></button>
+                                <button class="spen-btn" id="spen-eraser" onclick="setSpenTool('eraser')"><i class="fa-solid fa-eraser"></i></button>
+                            </div>
+                            <div class="spen-tool-group">
+                                <button class="spen-btn" onclick="clearSpenCanvas()"><i class="fa-solid fa-trash-can"></i></button>
+                                <button class="spen-btn" onclick="saveSpenSketch()"><i class="fa-solid fa-save"></i></button>
+                                <button class="spen-btn" onclick="analyzeSpenSketch()" style="color:var(--color-accent);" title="AI Vision Analyse"><i class="fa-solid fa-brain"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:10px;">
+                        Maak notities of schets verbindingen met je S Pen. Klik op opslaan om dit naar AGI te sturen.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TAB 5: VOICE & AI CHAT (OMNI AI BY JwP TECH) -->
+            <div id="chat" class="tab-panel">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Omni AI // Developed by JwP Tech</span>
+                        <span style="color:var(--color-accent); font-size:0.75rem; font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-circle-check"></i> Omni Core Active</span>
+                    </div>
+                    
+                    <!-- 3D Cognitive Process Wave visualizer -->
+                    <canvas id="cognitive-wave-canvas"></canvas>
+
+                    <div class="mobile-chat" id="chat-stream">
+                        <div class="chat-bubble assistant">
+                            Systeemverbinding met **Omni AI** (ontwikkeld door **JwP Tech**) tot stand gebracht. 
+                            Spreek je commando in of typ een bericht om de AGI-infrastructuur te beheren.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="voice-bar">
+                    <input type="text" id="chat-input" placeholder="Typ of spreek een commando..." onkeydown="handleChatEnter(event)">
+                    <button class="mic-btn" id="mic-button" onclick="toggleSpeechRecognition()"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+            </div>
+
+            <!-- TAB 6: TERMINAL CLI -->
+            <div id="terminal" class="tab-panel">
+                <div class="widget-card" style="padding:14px;">
+                    <div class="widget-header">
+                        <span>Termux console</span>
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                    <div class="terminal-cli-mobile">
+                        <div class="terminal-cli-body" id="cli-output">
+                            <div>Antigravity S26 CLI Session</div>
+                            <div style="color:var(--text-muted);">Type 'help' voor opties.</div>
+                        </div>
+                        <div class="terminal-cli-input-row">
+                            <span style="color:var(--color-accent); font-weight:700;">$</span>
+                            <input type="text" class="terminal-cli-input" id="cli-input" onkeydown="handleCliEnter(event)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: PROCESSES (TASK MANAGER) -->
+            <div id="processes" class="tab-panel">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Termux Processenbeheer</span>
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <div class="nexus-table-container">
+                        <table class="nexus-table">
+                            <thead>
+                                <tr>
+                                    <th>PID</th>
+                                    <th>Command</th>
+                                    <th>Tijd</th>
+                                    <th>Actie</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processes-table-body">
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:var(--text-muted);">Processen ophalen...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top:14px;">
+                        <button class="action-button primary" onclick="refreshProcesses()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Processen</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 8: MODEL REGISTRY -->
+            <div id="models" class="tab-panel">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>AI Model Register (Gemini & Claude)</span>
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div style="margin-bottom:14px;">
+                        <input type="text" id="model-search" placeholder="Zoek op modelnaam..." oninput="filterModels()" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                    </div>
+                    <div class="nexus-table-container">
+                        <table class="nexus-table">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Input Limit</th>
+                                    <th>Output Limit</th>
+                                    <th>Thinking</th>
+                                </tr>
+                            </thead>
+                            <tbody id="models-table-body">
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:var(--text-muted);">Modellen inladen...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 9: SETTINGS -->
+            <div id="settings" class="tab-panel">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Systeeminstellingen</span>
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <div class="nexus-input-group">
+                            <label for="settings-model">Actief AI Model</label>
+                            <select id="settings-model" class="nexus-input" style="background:#000;">
+                                <option value="models/gemini-2.5-flash">Gemini 2.5 Flash</option>
+                                <option value="models/gemini-2.5-pro">Gemini 2.5 Pro</option>
+                                <option value="models/gemini-3.1-pro-preview">Gemini 3.1 Pro (Preview)</option>
+                                <option value="models/deep-research-pro-preview-12-2025">Deep Research Pro (Preview)</option>
+                                <option value="models/claude-3-5-sonnet">Claude 3.5 Sonnet</option>
+                            </select>
+                        </div>
+                        <div class="nexus-input-group">
+                            <label for="settings-vps-ip">Contabo VPS IP</label>
+                            <input type="text" id="settings-vps-ip" class="nexus-input" value="158.220.91.62">
+                        </div>
+                        <div class="nexus-input-group">
+                            <label for="settings-vps-port">Contabo VPS SSH Poort</label>
+                            <input type="number" id="settings-vps-port" class="nexus-input" value="2222">
+                        </div>
+                        <button class="action-button primary" onclick="saveSystemSettings()" style="margin-top:10px;"><i class="fa-solid fa-save"></i> Instellingen Opslaan</button>
+                    </div>
+                </div>
+
+                <!-- Sessie & Afmelden -->
+                <div class="widget-card" style="margin-top: 15px; border-color: rgba(239, 68, 68, 0.25);">
+                    <div class="widget-header">
+                        <span>Beveiligde Sessie</span>
+                        <i class="fa-solid fa-lock" style="color:var(--color-danger);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        U bent momenteel aangemeld als <strong style="color:#fff;">JwP_admin</strong>.
+                    </p>
+                    <button class="action-button danger" onclick="logoutSession()" style="width:100%; background: linear-gradient(135deg, var(--color-danger), #b91c1c); border:none;"><i class="fa-solid fa-right-from-bracket"></i> Sessie Beëindigen</button>
+                </div>
+            </div>
+
+            <!-- TAB 10: HERMES AI CORE CONTROL -->
+            <div id="hermes" class="tab-panel">
+                <!-- Status card -->
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.04), rgba(56, 189, 248, 0.04)); border-color: rgba(16, 185, 129, 0.25);">
+                    <div class="widget-header">
+                        <span>Hermes AI Status</span>
+                        <span style="color:var(--color-success); font-weight:800;"><i class="fa-solid fa-circle-check"></i> Unrestricted</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                        <div style="font-size:1.8rem; font-weight:900; color:#fff;" id="hermes-badge-status">🔓 UNRESTRICTED</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">
+                            Model: <strong style="color:#fff;" id="hermes-badge-model">gemma4:31b-cloud (nousresearch)</strong>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:8px;">
+                            <span style="background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); color:var(--color-accent); font-size:0.65rem; font-weight:800; padding:4px 8px; border-radius:6px; text-transform:uppercase;"><i class="fa-solid fa-bolt"></i> GPU Accel</span>
+                            <span style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); color:var(--color-success); font-size:0.65rem; font-weight:800; padding:4px 8px; border-radius:6px; text-transform:uppercase;"><i class="fa-solid fa-fingerprint"></i> Biometric lock</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biometric test trigger card -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>S26 Biometrische Verificatie</span>
+                        <i class="fa-solid fa-fingerprint" style="color:var(--color-success);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Hermes is biometrisch beveiligd. Druk op de knop om de vingerafdrukscanner op je S26 Ultra te testen via <code>termux-api</code>.
+                    </p>
+                    <button class="action-button primary" id="biometric-btn" onclick="testBiometrics()" style="background: linear-gradient(135deg, var(--color-success), #059669); box-shadow: 0 0 15px rgba(16,185,129,0.3); border:none;"><i class="fa-solid fa-fingerprint"></i> Scan Vingerafdruk</button>
+                    <div id="biometric-result" style="display:none; margin-top:12px; font-size:0.8rem; padding:10px 14px; border-radius:10px; font-weight:700; text-align:center;"></div>
+                </div>
+
+                <!-- Active Skills card -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Geregistreerde AI Skills</span>
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;" id="hermes-skills-list">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Skills laden...</div>
+                    </div>
+                </div>
+
+                <!-- Backtest results card -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Betting Sniper Backtest Resultaten</span>
+                        <i class="fa-solid fa-trophy" style="color:var(--color-warning);"></i>
+                    </div>
+                    <div class="nexus-table-container" style="margin-top:10px;">
+                        <table class="nexus-table">
+                            <thead>
+                                <tr>
+                                    <th>Competitie</th>
+                                    <th>Inleg</th>
+                                    <th>Netto</th>
+                                    <th>ROI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hermes-backtest-table">
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:var(--text-muted);">Laden...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:10px; font-weight:600; text-align:center;">
+                        Highest Odd Hit: <strong style="color:var(--color-success);" id="hermes-highest-odd">-</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 11: ANTIGRAVITY ENGINE -->
+            <div id="antigravity" class="tab-panel">
+                <!-- Status card -->
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.04), rgba(56, 189, 248, 0.04)); border-color: rgba(56, 189, 248, 0.25);">
+                    <div class="widget-header">
+                        <span>Antigravity AGI Engine</span>
+                        <span style="color:var(--color-accent); font-weight:800;"><i class="fa-solid fa-circle-check"></i> DeepMind Active</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                        <div style="font-size:1.6rem; font-weight:900; color:#fff;">⚡ ANTIGRAVITY AGI</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">
+                            Developer: <strong style="color:#fff;">Google DeepMind Advanced Agentic Coding Team</strong>
+                        </div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">
+                            Status: <strong style="color:var(--color-accent);">ONLINE // PAIR PROGRAMMING ACTIVE</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Tools card -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>AGI Native Tools</span>
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;" id="antigravity-tools-list">
+                        <div style="font-size:0.8rem; color:var(--text-muted); text-align:center;">Tools laden...</div>
+                    </div>
+                </div>
+
+                <!-- Forensische Skills card -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Workspace Forensic & Recon Skills</span>
+                        <i class="fa-solid fa-shield-virus" style="color:var(--color-accent);"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;" id="antigravity-skills-list">
+                        <div style="font-size:0.8rem; color:var(--text-muted); text-align:center;">Skills laden...</div>
+                    </div>
+                </div>
+
+                <!-- Subagent Spawning Card -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Subagent Spawning Interface</span>
+                        <i class="fa-solid fa-users-gear" style="color:var(--color-accent);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Delegeer taken autonoom naar een parallelle subagent op de achtergrond.
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="nexus-input-group">
+                            <label for="subagent-type">Subagent Type</label>
+                            <select id="subagent-type" class="nexus-input" style="background:#000;">
+                                <option value="research">Research Subagent (Read-Only Codebase Explorer)</option>
+                                <option value="self">Self Subagent (Full Agentic Cloning Mode)</option>
+                            </select>
+                        </div>
+                        <div class="nexus-input-group">
+                            <label for="subagent-prompt">Subagent Taak / Prompt</label>
+                            <input type="text" id="subagent-prompt" class="nexus-input" value="Scan SnappCar API endpoints in ~/Gateway voor kwetsbaarheden.">
+                        </div>
+                        <button class="action-button primary" onclick="spawnActiveSubagent()" style="border:none;"><i class="fa-solid fa-paper-plane"></i> Spawn Subagent</button>
+                    </div>
+
+                    <!-- Logger output -->
+                    <div id="subagent-log-box" style="display:none; margin-top:16px;">
+                        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;"><i class="fa-solid fa-terminal"></i> Subagent Bootstrap Logs:</div>
+                        <div class="terminal-cli-mobile" style="height:140px; font-size:0.7rem; padding:10px;">
+                            <div class="terminal-cli-body" id="subagent-log-output" style="color:var(--color-success); font-family: 'Fira Code', monospace; line-height: 1.45;">
+                                <!-- Logs printed typewriter style -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manus AI Dispatcher Card -->
+                <div class="widget-card" style="border-color: rgba(56, 189, 248, 0.3); background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(139, 92, 246, 0.05));">
+                    <div class="widget-header">
+                        <span>Manus AI Autonomous Browser Agent</span>
+                        <span class="badge-status-glow success"><i class="fa-solid fa-bolt"></i> Bridge Ready</span>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Verstuur een taak rechtstreeks naar Manus AI voor autonome web browsing, scraping en acties.
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="nexus-input-group">
+                            <label for="manus-prompt">Manus AI Prompt / Taak</label>
+                            <input type="text" id="manus-prompt" class="nexus-input" placeholder="Bijv. Browse op Google en zoek naar nieuwste AI nieuws..." value="Voer een autonome status scan uit.">
+                        </div>
+                        <button class="action-button primary" onclick="dispatchManusUiTask()" style="border:none; background: linear-gradient(135deg, var(--color-accent), #2563eb);"><i class="fa-solid fa-paper-plane"></i> Dispatch naar Manus AI</button>
+                    </div>
+
+                    <!-- Manus Dispatch Log Output -->
+                    <div id="manus-log-box" style="display:none; margin-top:16px;">
+                        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;"><i class="fa-solid fa-terminal"></i> Manus AI Response:</div>
+                        <div class="terminal-cli-mobile" style="height:120px; font-size:0.7rem; padding:10px;">
+                            <div class="terminal-cli-body" id="manus-log-output" style="color:var(--color-accent); font-family: 'Fira Code', monospace; line-height: 1.45;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 13: AI AGENCY & UNIVERSAL AUTO-RESEARCH HUB -->
+            <div id="aiagency" class="tab-panel">
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(139, 92, 246, 0.05)); border-color: rgba(16, 185, 129, 0.3);">
+                    <div class="widget-header">
+                        <span>Open Source AI Agency Platform</span>
+                        <span class="badge-status-glow success">$299/mo SaaS</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; background:rgba(0,0,0,0.3); padding:12px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <div>
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Total Monthly Revenue (MRR)</div>
+                            <div style="font-size:1.4rem; font-weight:800; color:var(--color-success);" id="agency-mrr-val">$0.00</div>
+                        </div>
+                        <button class="action-button primary" onclick="cloneAiWorkerPrompt()" style="width:auto; padding:8px 16px;"><i class="fa-solid fa-plus-circle"></i> Clone Worker</button>
+                    </div>
+
+                    <!-- Omni-Core Agent Swarm Visualization -->
+                    <div style="margin-top:14px; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.2);">
+                        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <span><i class="fa-solid fa-network-wired"></i> Omni-Core Agent Swarm</span>
+                            <span class="badge-status-glow success" style="font-size:0.6rem;"><i class="fa-solid fa-link"></i> SYNCHRONIZED</span>
+                        </div>
+                        
+                        <!-- The Meta-Agent (Master) -->
+                        <div style="display:flex; flex-direction:column; align-items:center; margin-bottom: 16px;">
+                            <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #8b5cf6, #38bdf8); display:flex; justify-content:center; align-items:center; box-shadow:0 0 15px rgba(139, 92, 246, 0.5); border:2px solid #fff; z-index:2;">
+                                <i class="fa-solid fa-brain" style="color:#fff; font-size:1.2rem;"></i>
+                            </div>
+                            <div style="font-size:0.8rem; font-weight:800; color:#fff; margin-top:6px;">OMNI-CORE (META)</div>
+                            <div style="font-size:0.65rem; color:var(--color-success);">Orchestrator</div>
+                            <div style="width:2px; height:20px; background:rgba(139, 92, 246, 0.5); margin-top:4px;"></div>
+                            <div style="width:80%; height:2px; background:rgba(139, 92, 246, 0.5);"></div>
+                        </div>
+
+                        <!-- Sub-Agents (Workers) -->
+                        <div id="agency-workers-list" style="display:flex; justify-content:space-around; gap:8px;">
+                            <div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:10px; width:100%;">Swarm nodes verbinden...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Universal Auto-Research Live Control Card -->
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(99, 102, 241, 0.05)); border-color: rgba(56, 189, 248, 0.3);">
+                    <div class="widget-header">
+                        <span>Universal Auto-Research Engine v5.0</span>
+                        <i class="fa-solid fa-microchip" style="color:var(--color-accent); text-shadow: var(--glow-cyan);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+                        Draai autonome Karpathy research-loops over Mobility, Quant Trading en AI Agency om gewichten en parameters continu te verbeteren.
+                    </p>
+
+                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                        <div style="flex:1;">
+                            <label style="font-size:0.7rem; color:var(--text-muted);">Iteraties Per Domein</label>
+                            <input type="number" id="research-iters-input" value="15" min="5" max="50" style="width:100%; background:rgba(255,255,255,0.03); border:1px solid var(--panel-border); border-radius:10px; padding:8px 12px; color:#fff;">
+                        </div>
+                        <button class="action-button primary" onclick="triggerUniversalResearchRun()" style="flex:1.5; height:42px; margin-top:16px; background: linear-gradient(135deg, var(--color-accent), #4f46e5);"><i class="fa-solid fa-play"></i> Start Research Loop</button>
+                    </div>
+
+                    <div id="research-report-container" style="background:rgba(0,0,0,0.4); border-radius:12px; padding:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.75rem; font-weight:800; color:var(--color-accent); margin-bottom:6px;"><i class="fa-solid fa-chart-line"></i> Laatste Research Resultaten:</div>
+                        <div id="research-report-body" style="font-size:0.75rem; color:#fff; font-family:'Fira Code', monospace;">Laad resultaten...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 12: GREENWHEELS MOBILITY WORKFLOW -->
+            <div id="greenwheels" class="tab-panel">
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.04), rgba(56, 189, 248, 0.04)); border-color: rgba(234, 179, 8, 0.25);">
+                    <div class="widget-header">
+                        <span>Greenwheels API Control</span>
+                        <i class="fa-solid fa-car" style="color: #eab308; text-shadow: 0 0 10px rgba(234,179,8,0.4);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Blader door de actieve vlootlocaties en beheer de trips van de S26 Ultra deelmobiliteitsintegratie.
+                    </p>
+                    <div class="nexus-input-group">
+                        <label for="gw-search">Zoeken op locatie of kenteken</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="gw-search" class="nexus-input" placeholder="Bijv. Delft, Amsterdam of kenteken..." onkeyup="filterGwCars()">
+                            <button class="action-button primary" onclick="loadGwCars()" style="width:auto; padding:0 16px;"><i class="fa-solid fa-sync"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live API Latency Meter -->
+                <div class="widget-card" style="border-color: rgba(16, 185, 129, 0.25);">
+                    <div class="widget-header">
+                        <span>API Latency Monitor</span>
+                        <i class="fa-solid fa-gauge-high" style="color: var(--color-success);"></i>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Rate Delay</div>
+                            <div style="font-size:1.2rem; font-weight:800; color:var(--color-success);" id="gw-rate-delay">0.05s</div>
+                        </div>
+                        <div style="width: 1px; height: 30px; background: var(--panel-border);"></div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Hit Ratio</div>
+                            <div style="font-size:1.2rem; font-weight:800; color:#fff;" id="gw-hit-ratio">99.8%</div>
+                        </div>
+                        <div style="width: 1px; height: 30px; background: var(--panel-border);"></div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Status</div>
+                            <div style="font-size:1rem; font-weight:800; color:var(--color-success);" id="gw-api-status">STABLE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GPS & Location Control -->
+                <div class="widget-card" style="border-color: rgba(56, 189, 248, 0.25); background: rgba(4, 4, 8, 0.85);">
+                    <div class="widget-header">
+                        <span>S26 Device GPS & Location Control</span>
+                        <i class="fa-solid fa-location-crosshairs" style="color:var(--color-accent); text-shadow: var(--glow-cyan);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Vind actuele auto's ten opzichte van je echte locatie. Gebruik HTML5 Geolocation of stel handmatig je startcoördinaten in.
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div style="display:flex; gap:10px;">
+                            <div style="width:50%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Latitude (Lat)</label>
+                                <input type="number" step="0.0001" id="gw-device-lat" value="52.0116" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                            <div style="width:50%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Longitude (Lng)</label>
+                                <input type="number" step="0.0001" id="gw-device-lng" value="4.3571" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:12px; padding:10px 14px; color:#fff; font-size:0.85rem;">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:4px;">
+                            <button class="action-button primary" onclick="updateDeviceLocationHTML5()" style="width:50%; background: linear-gradient(135deg, var(--color-accent), #4f46e5); border:none;"><i class="fa-solid fa-location-arrow"></i> Echte GPS</button>
+                            <button class="action-button secondary" onclick="updateDeviceLocationManual()" style="width:50%; border-color:var(--color-accent); color:var(--color-accent); background:transparent;"><i class="fa-solid fa-floppy-disk"></i> Handmatig GPS</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Cars List -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Beschikbare Auto's</span>
+                        <span class="badge" id="gw-car-count" style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.25); color: #eab308;">0 auto's</span>
+                    </div>
+                    <div class="nexus-table-container" style="margin-top:10px; max-height: 250px; overflow-y: auto;">
+                        <table class="nexus-table">
+                            <thead>
+                                <tr>
+                                    <th>Kenteken / ID</th>
+                                    <th>Adres / Locatie</th>
+                                    <th>Actie</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gw-cars-table-body">
+                                <tr>
+                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">Voer een zoekterm in of vernieuw de lijst.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Live API Recon Console -->
+                <div class="widget-card" style="border-color: rgba(234, 179, 8, 0.2);">
+                    <div class="widget-header">
+                        <span>API Recon & Exploit Suite</span>
+                        <i class="fa-solid fa-terminal" style="color: #eab308;"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Voer actieve tests uit op de API-eindpunten van Greenwheels om authenticatie- en locatietoleranties te testen.
+                    </p>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap:8px; margin-bottom:12px;">
+                        <button class="action-button secondary" onclick="runGwRecon('jwt_force')" style="border-color:#eab308; color:#eab308; background:transparent;"><i class="fa-solid fa-key"></i> JWT Force</button>
+                        <button class="action-button secondary" onclick="runGwRecon('gps_match')" style="border-color:#eab308; color:#eab308; background:transparent;"><i class="fa-solid fa-location-crosshairs"></i> GPS Spoof</button>
+                        <button class="action-button secondary" onclick="runGwRecon('master_burst')" style="border-color:#eab308; color:#eab308; background:transparent;"><i class="fa-solid fa-bolt"></i> Master Burst</button>
+                    </div>
+                    <div id="gw-recon-results" style="display:none; margin-top:12px;">
+                        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;"><i class="fa-solid fa-network-wired"></i> Recon Logs:</div>
+                        <div class="terminal-cli-mobile" style="height:150px; font-size:0.7rem; padding:10px; overflow-y:auto;">
+                            <div class="terminal-cli-body" id="gw-recon-log" style="color:#eab308; font-family: 'Fira Code', monospace; line-height: 1.45;">
+                                <!-- Recon Logs -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Simulation Status -->
+                <div class="widget-card" id="gw-status-card" style="display:none; border-color: var(--color-success); background: rgba(16, 185, 129, 0.02);">
+                    <div class="widget-header">
+                        <span>Actieve Trip & Telemetrie</span>
+                        <span style="color:var(--color-success); font-weight:800;"><i class="fa-solid fa-unlock"></i> ACTIEF</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px; font-size:0.8rem;">
+                        <div>Auto Kenteken: <strong id="gw-status-license" style="color:#fff;">-</strong></div>
+                        <div>Locatie: <span id="gw-status-address" style="color:var(--text-muted);">-</span></div>
+                        <div>Sleutelstatus: <strong style="color:var(--color-success);">VRIJGEGEVEN // STARTMOTOR VRIJ</strong></div>
+                        <div style="display:flex; gap:8px; margin-top:10px;">
+                            <button class="action-button secondary" onclick="controlGwCar('lock')" style="border-color:var(--color-danger); color:var(--color-danger);"><i class="fa-solid fa-lock"></i> Vergrendelen & Einde Trip</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ritkosten Calculator -->
+                <div class="widget-card" style="border-color: rgba(16, 185, 129, 0.25);">
+                    <div class="widget-header">
+                        <span>Greenwheels Cost Calculator</span>
+                        <i class="fa-solid fa-calculator" style="color: var(--color-success);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Bereken wiskundig de ritprijs op basis van uren, kilometers en je abonnementsvorm.
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div style="display:flex; gap:8px;">
+                            <div style="width:33%;">
+                                <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Uren</label>
+                                <input type="number" id="cost-hours" value="4" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:8px; padding:8px; color:#fff; font-size:0.8rem;">
+                            </div>
+                            <div style="width:33%;">
+                                <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Kilometers</label>
+                                <input type="number" id="cost-kms" value="60" style="width:100%; background:rgba(255,255,255,0.02); border:1px solid var(--panel-border); border-radius:8px; padding:8px; color:#fff; font-size:0.8rem;">
+                            </div>
+                            <div style="width:34%;">
+                                <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Tariefklasse</label>
+                                <select id="cost-tier" style="width:100%; background:#010103; border:1px solid var(--panel-border); border-radius:8px; padding:8px; color:#fff; font-size:0.8rem;">
+                                    <option value="start">Start (Geen ab.)</option>
+                                    <option value="plus">Plus (€10/maand)</option>
+                                    <option value="pro">Pro (€25/maand)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="action-button primary" onclick="calculateTripCost()" style="background: linear-gradient(135deg, var(--color-success), #047857); border:none; margin-top:4px;"><i class="fa-solid fa-coins"></i> Bereken Ritprijs</button>
+                        <div id="cost-results" style="display:none; margin-top:8px; padding:10px; border-radius:8px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); font-size:0.8rem; line-height:1.4;">
+                            <!-- Kosten resultaten -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trips & Rithistorie -->
+                <div class="widget-card" style="margin-bottom: 20px;">
+                    <div class="widget-header">
+                        <span>Dossier: Mijn Trips & Historie</span>
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <div class="nexus-table-container" style="margin-top:10px; max-height: 180px; overflow-y: auto;">
+                        <table class="nexus-table">
+                            <thead>
+                                <tr>
+                                    <th>Voertuig</th>
+                                    <th>Starttijd</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gw-history-table-body">
+                                <tr>
+                                    <td colspan="3" style="text-align:center; color:var(--text-muted);">Geen trips geregistreerd in de database.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 13: HACKING & SECURITY AUDIT WORKFLOW -->
+            <div id="security" class="tab-panel">
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.04), rgba(56, 189, 248, 0.04)); border-color: rgba(239, 68, 68, 0.25);">
+                    <div class="widget-header">
+                        <span>Defensieve Security & Audit Logs</span>
+                        <i class="fa-solid fa-shield-halved" style="color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.4);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Voer poortscans en vulnerability audits uit op geconfigureerde systemen, of voer een Chronos timeline-reconstructie uit bij incidenten.
+                    </p>
+                    <div class="nexus-input-group">
+                        <label for="sec-ip">Target IP-adres</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="sec-ip" class="nexus-input" value="127.0.0.1">
+                            <button class="action-button primary" onclick="runSecurityScan()" style="background:var(--color-danger); border:none;"><i class="fa-solid fa-crosshairs"></i> Scan Target</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Scan Results (Collapsible) -->
+                <div class="widget-card" id="sec-scan-card" style="display:none;">
+                    <div class="widget-header">
+                        <span>Scan resultaten voor <span id="sec-scan-target" style="color:#fff;">127.0.0.1</span></span>
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div class="nexus-table-container" style="margin-top:10px;">
+                        <table class="nexus-table">
+                            <thead>
+                                <tr>
+                                    <th>Poort</th>
+                                    <th>Dienst</th>
+                                    <th>Status</th>
+                                    <th>Veiligheid</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sec-scan-table-body">
+                                <!-- Dynamic results -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="sec-vulnerabilities-box" style="margin-top:12px; font-size:0.8rem; padding:10px; border-radius:8px; background:rgba(239,68,68,0.05); border:1px solid rgba(239,68,68,0.15);">
+                        <strong style="color:var(--color-danger);"><i class="fa-solid fa-triangle-exclamation"></i> Gevonden Kwetsbaarheden:</strong>
+                        <div id="sec-vulnerabilities-list" style="margin-top:6px; line-height:1.4;"></div>
+                    </div>
+                </div>
+
+                <!-- Chronos Incident Timeline Generator -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Chronos Timeline Reconstruction</span>
+                        <i class="fa-solid fa-timeline" style="color:var(--color-accent);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Analyseert SSH logboeken, blockchain timestamps en VPS-events om een chronologische tijdlijn van aanvalsfasen te reconstrueren.
+                    </p>
+                    <button class="action-button primary" onclick="runChronosTimeline()" style="background: linear-gradient(135deg, var(--color-accent), #0369a1); border:none;"><i class="fa-solid fa-clock-rotate-left"></i> Reconstruct Timeline</button>
+                    
+                    <div id="sec-timeline-results" style="display:none; margin-top:16px;">
+                        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;"><i class="fa-solid fa-code"></i> Chronos Tijdlijn Rapportage:</div>
+                        <div class="terminal-cli-mobile" style="height:160px; font-size:0.7rem; padding:10px; overflow-y:auto; margin-bottom:12px;">
+                            <div class="terminal-cli-body" id="sec-timeline-log" style="color:var(--color-success); font-family: 'Fira Code', monospace; line-height: 1.45; white-space: pre-wrap;">
+                                <!-- Timeline output -->
+                            </div>
+                        </div>
+
+                        <!-- Visual Timeline Nodes -->
+                        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;"><i class="fa-solid fa-diagram-project"></i> Visuele Tijdlijn Reconstructie:</div>
+                        <div id="sec-visual-timeline" style="display:flex; flex-direction:column; gap:16px; position:relative; padding-left:20px; border-left: 2px solid rgba(239, 68, 68, 0.2); margin-left: 10px; margin-bottom: 12px;">
+                            <!-- Dynamic visual events will render here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VPS Hardening Protocol -->
+                <div class="widget-card" style="border-color: rgba(16, 185, 129, 0.25);">
+                    <div class="widget-header">
+                        <span>VPS Secure Hardening Suite</span>
+                        <i class="fa-solid fa-lock" style="color: var(--color-success); text-shadow: 0 0 10px rgba(16,185,129,0.4);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Verhoog de beveiliging van de remote servers door direct firewall rules te configureren en poorten te sluiten.
+                    </p>
+                    <button class="action-button primary" onclick="runSecurityHardening()" style="background: linear-gradient(135deg, var(--color-success), #047857); border:none;"><i class="fa-solid fa-shield-virus"></i> Start Hardening Protocol</button>
+                    
+                    <div id="sec-hardening-results" style="display:none; margin-top:16px;">
+                        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;"><i class="fa-solid fa-terminal"></i> Hardening Logs:</div>
+                        <div class="terminal-cli-mobile" style="height:150px; font-size:0.7rem; padding:10px; overflow-y:auto;">
+                            <div class="terminal-cli-body" id="sec-hardening-log" style="color:var(--color-success); font-family: 'Fira Code', monospace; line-height: 1.45;">
+                                <!-- Hardening Logs -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: SOLANA TRADING BOT -->
+            <div id="solana" class="tab-panel">
+                <!-- Bot Status Widget -->
+                <div class="widget-card" id="solana-status-card" style="border-color: rgba(168, 85, 247, 0.25);">
+                    <div class="widget-header">
+                        <span>Solana Quant Bot Control</span>
+                        <i class="fa-solid fa-coins" style="color: #a855f7; text-shadow: 0 0 10px rgba(168,85,247,0.4);"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.85rem; color:var(--text-muted);">Status:</span>
+                            <span id="solana-bot-status-badge" class="badge-status-glow error"><i class="fa-solid fa-circle-dot"></i> Offline</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.85rem; color:var(--text-muted);">Balans:</span>
+                            <span style="font-size:1.1rem; font-weight:900; color:#fff;" id="solana-bot-balance">-- SOL</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.85rem; color:var(--text-muted);">Gedraaide Cycli:</span>
+                            <span style="font-size:1rem; font-weight:800; color:#fff;" id="solana-bot-cycles">--</span>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <button id="solana-start-btn" class="action-button primary" onclick="controlSolanaBot('start')" style="background: linear-gradient(135deg, #a855f7, #7e22ce); border:none; flex:1;"><i class="fa-solid fa-play"></i> Start Bot</button>
+                            <button id="solana-stop-btn" class="action-button danger" onclick="controlSolanaBot('stop')" style="flex:1; display:none;"><i class="fa-solid fa-stop"></i> Stop Bot</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance & PnL Metrics Widget -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Auto-Research Performance Metrics</span>
+                        <i class="fa-solid fa-chart-area" style="color: var(--color-success);"></i>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; background:rgba(0,0,0,0.3); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Sharpe Ratio</div>
+                            <div style="font-size:1.2rem; font-weight:800; color:var(--color-success);" id="solana-sharpe">3.82</div>
+                        </div>
+                        <div style="width: 1px; height: 30px; background: var(--panel-border);"></div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Loss Score</div>
+                            <div style="font-size:1.2rem; font-weight:800; color:#fff;" id="solana-loss-score">-1.91e13</div>
+                        </div>
+                        <div style="width: 1px; height: 30px; background: var(--panel-border);"></div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="font-size:0.75rem; color:var(--text-muted);">Win Rate</div>
+                            <div style="font-size:1.2rem; font-weight:800; color:var(--color-accent);" id="solana-win-rate">53%</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; height:150px; position:relative;">
+                        <canvas id="solana-pnl-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Active Positions Widget -->
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span>Actieve Posities (Supabase)</span>
+                        <i class="fa-solid fa-chart-line" style="color: var(--color-accent);"></i>
+                    </div>
+                    <div style="overflow-x:auto; margin-top:10px;">
+                        <table style="width:100%; border-collapse:collapse; font-size:0.8rem; text-align:left;">
+                            <thead>
+                                <tr style="border-bottom:1px solid var(--panel-border); color:var(--text-muted);">
+                                    <th style="padding:8px 4px;">Token</th>
+                                    <th style="padding:8px 4px;">Koopprijs</th>
+                                    <th style="padding:8px 4px;">Inzet</th>
+                                    <th style="padding:8px 4px;">Tijdstip</th>
+                                </tr>
+                            </thead>
+                            <tbody id="solana-positions-table-body">
+                                <tr>
+                                    <td colspan="4" style="text-align:center; padding:16px; color:var(--text-muted);">Geen actieve posities gevonden.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: AGENT COLLABORATION & LIFE ENGINE -->
+            <div id="collab" class="tab-panel">
+                <!-- Visual Map of Agents -->
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(56, 189, 248, 0.05)); border-color: rgba(139, 92, 246, 0.25);">
+                    <div class="widget-header">
+                        <span>Agent Symbiosis Netwerk</span>
+                        <span class="badge" style="background:rgba(139, 92, 246, 0.1); border:1px solid rgba(139, 92, 246, 0.3); color:var(--color-primary); font-weight: 800;">AGI Collective</span>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Visueel overzicht van de 10 actieve AI-agenten. Klik op een agent om hun status, specialiteit en doelen in te zien.
+                    </p>
+                    <div style="position:relative; height:280px; background:rgba(0,0,0,0.2); border-radius:16px; border:1px solid rgba(255,255,255,0.03); overflow:hidden; margin-bottom:12px;">
+                        <!-- Connection Lines SVG -->
+                        <svg id="collab-connections-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
+                        
+                        <!-- Agents Visual Nodes Container -->
+                        <div id="collab-nodes-container" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Selected Agent Details Card -->
+                <div class="widget-card" id="collab-agent-details" style="display:none; border-color: rgba(56, 189, 248, 0.3); background: rgba(4, 4, 8, 0.9);">
+                    <div class="widget-header" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom:8px; margin-bottom:10px;">
+                        <span id="collab-detail-name" style="font-weight:800; font-size:1rem; color:#fff;">Agent Details</span>
+                        <span id="collab-detail-status" class="badge">Idle</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.8rem;">
+                        <div><span style="color:var(--text-muted);">Specialiteit:</span> <strong id="collab-detail-specialty" style="color:#fff;">-</strong></div>
+                        <div><span style="color:var(--text-muted);">Huidige Activiteit:</span> <span id="collab-detail-task" style="color:var(--color-accent); font-weight:600;">-</span></div>
+                        <div style="margin-top:4px;"><span style="color:var(--text-muted);">Sociale Connecties (Relatie %):</span></div>
+                        <div id="collab-detail-relations" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;"></div>
+                    </div>
+                </div>
+
+                <!-- Command input for the collective -->
+                <div class="widget-card" style="border-color: rgba(56, 189, 248, 0.25);">
+                    <div class="widget-header">
+                        <span>Collectief Commando Center</span>
+                        <i class="fa-solid fa-terminal" style="color: var(--color-accent);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4; margin-bottom:12px;">
+                        Geef een opdracht aan het collectief. De orchestrator (AGY) zal de taak verdelen over de meest geschikte agenten.
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="nexus-input-group">
+                            <input type="text" id="collab-task-input" class="nexus-input" placeholder="Bijv. 'Analyseer Greenwheels API' of 'Optimaliseer Solana bot'..." style="background:#000;">
+                        </div>
+                        <button class="action-button primary" onclick="sendCollabTask()" style="background: linear-gradient(135deg, var(--color-accent), #4f46e5); border:none;"><i class="fa-solid fa-rocket"></i> Verstuur Opdracht</button>
+                    </div>
+                </div>
+
+                <!-- Collaboration Logs -->
+                <div class="widget-card" style="margin-bottom: 20px;">
+                    <div class="widget-header">
+                        <span>Samenwerking Logs & Communicatie</span>
+                        <i class="fa-solid fa-list-check" style="color:var(--color-success);"></i>
+                    </div>
+                    <div class="terminal-cli-mobile" style="height:220px; font-size:0.75rem; padding:10px; overflow-y:auto; margin-top:10px;">
+                        <div class="terminal-cli-body" id="collab-log-output" style="color:#fff; font-family: 'Fira Code', monospace; line-height: 1.5; white-space: pre-wrap;">
+                            <!-- Live collaboration logs will stream here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: SYSTEM ROADMAP & TO-DO -->
+            <div id="todo" class="tab-panel">
+                <!-- Header Card -->
+                <div class="widget-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(56, 189, 248, 0.05)); border-color: rgba(16, 185, 129, 0.25);">
+                    <div class="widget-header">
+                        <span>Systeem Roadmap & To-Do</span>
+                        <i class="fa-solid fa-map" style="color:var(--color-success);"></i>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4;">
+                        Dit overzicht scheidt werkende functionaliteiten van niet-werkende of gesimuleerde (mock) onderdelen. Voeg taken toe om de AGI-roadmap aan te sturen.
+                    </p>
+                </div>
+
+                <!-- Non-Functional / Mock Roadmap Items -->
+                <div class="widget-card" style="border-color: rgba(244, 63, 94, 0.25);">
+                    <div class="widget-header">
+                        <span>Roadmap & Mock Modules (Incomplete/To-Do)</span>
+                        <span class="badge" style="background:rgba(244, 63, 94, 0.1); border:1px solid rgba(244, 63, 94, 0.3); color:var(--color-danger); font-weight: 800;">Pending</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;" id="todo-pending-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Functional / Real Modules -->
+                <div class="widget-card" style="border-color: rgba(16, 185, 129, 0.25);">
+                    <div class="widget-header">
+                        <span>Werkende Systeem Modules (Functional)</span>
+                        <span class="badge" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.3); color:var(--color-success); font-weight: 800;">Online</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); font-size:0.8rem;">
+                            <span>Cortex Graph & Nodes Manager</span>
+                            <span style="color:var(--color-success); font-weight:700;"><i class="fa-solid fa-circle-check"></i> Operational</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); font-size:0.8rem;">
+                            <span>Agent Symbiosis (Collab)</span>
+                            <span style="color:var(--color-success); font-weight:700;"><i class="fa-solid fa-circle-check"></i> Operational</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); font-size:0.8rem;">
+                            <span>Console Terminal CLI Executor</span>
+                            <span style="color:var(--color-success); font-weight:700;"><i class="fa-solid fa-circle-check"></i> Operational</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); font-size:0.8rem;">
+                            <span>S26 & VPS Task Manager</span>
+                            <span style="color:var(--color-success); font-weight:700;"><i class="fa-solid fa-circle-check"></i> Operational</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); font-size:0.8rem;">
+                            <span>VPS Secure Hardening Suite</span>
+                            <span style="color:var(--color-success); font-weight:700;"><i class="fa-solid fa-circle-check"></i> Operational</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); font-size:0.8rem;">
+                            <span>S26 Biometric Scanner Integration</span>
+                            <span style="color:var(--color-success); font-weight:700;"><i class="fa-solid fa-circle-check"></i> Operational</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Custom Roadmap Task -->
+                <div class="widget-card" style="border-color: rgba(56, 189, 248, 0.25);">
+                    <div class="widget-header">
+                        <span>Voeg Taak toe aan Roadmap</span>
+                        <i class="fa-solid fa-plus-circle" style="color: var(--color-accent);"></i>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div class="nexus-input-group">
+                            <label for="todo-title">Taak Titel</label>
+                            <input type="text" id="todo-title" class="nexus-input" placeholder="Bijv. 'Integreer API X'..." style="background:#000;">
+                        </div>
+                        <div class="nexus-input-group">
+                            <label for="todo-desc">Beschrijving</label>
+                            <input type="text" id="todo-desc" class="nexus-input" placeholder="Bijv. 'Bouw de webhook handlers...' " style="background:#000;">
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <div style="width:50%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Prioriteit</label>
+                                <select id="todo-priority" style="width:100%; background:#000; border:1px solid var(--panel-border); border-radius:12px; padding:10px; color:#fff; font-size:0.85rem;">
+                                    <option value="High">Hoog</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Laag</option>
+                                </select>
+                            </div>
+                            <div style="width:50%;">
+                                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Categorie</label>
+                                <input type="text" id="todo-category" class="nexus-input" value="Custom" style="background:#000;">
+                            </div>
+                        </div>
+                        <button class="action-button primary" onclick="addCustomTodo()" style="background: linear-gradient(135deg, var(--color-accent), #4f46e5); border:none; margin-top:10px;"><i class="fa-solid fa-save"></i> Opslaan in Roadmap</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: ORION GODMODE -->
+            <div id="orion" class="tab-panel">
+                <div class="widget-card" style="border-color: rgba(255, 0, 85, 0.4); height: calc(100vh - 200px); padding: 0; overflow: hidden; display: flex; flex-direction: column; background: rgba(10, 8, 22, 0.95);">
+                    <div class="widget-header" style="padding: 15px; border-bottom: 1px solid rgba(255,0,85,0.2); justify-content: center; position: relative;">
+                        <span style="color: #ff0055; font-weight: 900; font-family: 'Fira Code', monospace; letter-spacing: 2px; text-shadow: 0 0 15px rgba(255,0,85,0.8); font-size: 1.2rem;">ORION G0DM0DƎ</span>
+                        <i class="fa-solid fa-biohazard" style="color: #ff0055; position: absolute; right: 15px; text-shadow: 0 0 10px rgba(255,0,85,0.6);"></i>
+                    </div>
+                    <iframe id="godmode-iframe" src="about:blank" style="flex: 1; width: 100%; border: none; background: transparent;"></iframe>
+                    <script>
+                        // Set dynamic iframe source based on current host to prevent mixed-origin / localhost issues
+                        document.getElementById('godmode-iframe').src = window.location.protocol + "//" + window.location.hostname + ":3000/godmode/";
+                    </script>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Tactile Mobile Tab Bar -->
+        <div class="bottom-nav">
+            <div class="nav-button active" onclick="switchMobileTab('overview')">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-button" onclick="switchMobileTab('cortex')">
+                <i class="fa-solid fa-circle-nodes"></i>
+                <span>Cortex</span>
+            </div>
+            <div class="nav-button" onclick="switchMobileTab('sniper')">
+                <i class="fa-solid fa-crosshairs"></i>
+                <span>Sniper</span>
+            </div>
+            <div class="nav-button" onclick="switchMobileTab('spen')">
+                <i class="fa-solid fa-pen-nib"></i>
+                <span>S Pen</span>
+            </div>
+            <div class="nav-button" id="more-nav-btn" onclick="toggleMoreMenu(true)">
+                <i class="fa-solid fa-ellipsis"></i>
+                <span>More</span>
+            </div>
+        </div>
+
+        <!-- Premium Bottom-Sheet Overlay Menu -->
+        <div class="more-menu-overlay" id="more-menu-overlay" onclick="toggleMoreMenu(false)"></div>
+        <div class="more-menu-sheet" id="more-menu-sheet">
+            <div class="sheet-drag-handle" onclick="toggleMoreMenu(false)"></div>
+            <div class="sheet-title">Omni AI Nexus Menu</div>
+            <div class="sheet-grid">
+                <div class="sheet-btn" onclick="switchMobileTab('aiagency'); loadAiAgencyData(); loadResearchReport(); toggleMoreMenu(false);" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(139, 92, 246, 0.2)); border: 1px solid rgba(16, 185, 129, 0.4);">
+                    <i class="fa-solid fa-robot" style="color:var(--color-success);"></i>
+                    <span style="color:#fff; font-weight:800;">AI Agency & Research</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('todo'); toggleMoreMenu(false);" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(56, 189, 248, 0.15)); border: 1px solid rgba(16, 185, 129, 0.3);">
+                    <i class="fa-solid fa-list-check" style="color:var(--color-success); text-shadow: var(--glow-cyan);"></i>
+                    <span style="color:var(--color-success); font-weight:800;">System To-Do</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('collab'); toggleMoreMenu(false);" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(56, 189, 248, 0.15)); border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <i class="fa-solid fa-users" style="color:var(--color-accent); text-shadow: var(--glow-cyan);"></i>
+                    <span style="color:var(--color-accent); font-weight:800;">Agent Collab</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('chat'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-message"></i>
+                    <span>Assistant</span>
+                </div>
+                <!-- ORION GODMODE BTN -->
+                <div class="sheet-btn" onclick="switchMobileTab('orion'); toggleMoreMenu(false);" style="background: linear-gradient(135deg, rgba(255, 0, 85, 0.2), rgba(0, 0, 0, 0.5)); border: 1px solid rgba(255, 0, 85, 0.5); box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);">
+                    <i class="fa-solid fa-skull" style="color:#ff0055; text-shadow: 0 0 10px #ff0055;"></i>
+                    <span style="color:#ff0055; font-weight:900; letter-spacing: 1px; font-family: 'Fira Code', monospace;">G0DM0DƎ</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('terminal'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span>Console</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('processes'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Processes</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('models'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Registry</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('hermes'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-robot" style="color:var(--color-success); text-shadow: 0 0 10px rgba(16,185,129,0.4);"></i>
+                    <span style="color:var(--color-success);">Hermes AI</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('antigravity'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-user-astronaut" style="color:var(--color-accent); text-shadow: var(--glow-cyan);"></i>
+                    <span style="color:var(--color-accent);">Antigravity</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('greenwheels'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-car" style="color:#eab308; text-shadow: 0 0 10px rgba(234,179,8,0.4);"></i>
+                    <span style="color:#eab308;">Greenwheels</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('security'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-shield-halved" style="color:#ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.4);"></i>
+                    <span style="color:#ef4444;">Security Audit</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('solana'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-coins" style="color:#a855f7; text-shadow: 0 0 10px rgba(168,85,247,0.4);"></i>
+                    <span style="color:#a855f7;">Solana Bot</span>
+                </div>
+                <div class="sheet-btn" onclick="switchMobileTab('settings'); toggleMoreMenu(false);">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="sheet-btn" onclick="window.location.href='/database_academy.html'; toggleMoreMenu(false);">
+                    <i class="fa-solid fa-graduation-cap" style="color:var(--color-accent); text-shadow: var(--glow-cyan);"></i>
+                    <span style="color:var(--color-accent);">API Academy</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/dashboard.js?v=20260722-1422"></script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  orion-orchestrator:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile
+    container_name: orion-mega-orchestrator
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GCP_PROJECT_ID=jwp-orionx
+    volumes:
+      - ../..:/app
+    networks:
+      - orion-network
+
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik-proxy
+    restart: always
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - orion-network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-llm
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - orion-network
+
+networks:
+  orion-network:
+    driver: bridge
+
+volumes:
+  ollama_data:

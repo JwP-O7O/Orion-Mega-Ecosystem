@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DocuGen{% endblock %} - Professional Document Generator</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="glass-header">
+        <div class="container">
+            <nav class="flex justify-between items-center" style="height: 70px;">
+                <a href="{{ url_for('index') }}" class="logo-text">DocuGen</a>
+                
+                <div class="flex items-center">
+                    {% if session.user_id %}
+                        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
+                        <a href="{{ url_for('generate_document') }}" class="nav-link {% if request.endpoint == 'generate_document' %}active{% endif %}">Generate</a>
+                        <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">Login</a>
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm" style="margin-left: 1.5rem;">Get Started</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container section-spacer">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="animate-fade-in">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="container text-center text-muted section-spacer">
+        <p style="color: var(--text-muted); font-size: 0.9rem;">&copy; {{ now.year if now else 2025 }} DocuGen. Professional Document Solutions.</p>
+    </footer>
+</body>
+</html>

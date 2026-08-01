@@ -1,0 +1,82 @@
+[
+  {
+    "id": "td1",
+    "title": "Greenwheels Real Booking API",
+    "desc": "Volledige integratie met externe API & 3D-Secure bypass.",
+    "category": "Mobility",
+    "status": "completed",
+    "priority": "High"
+  },
+  {
+    "id": "td2",
+    "title": "Greenwheels Live Exploit Engine",
+    "desc": "Actieve tests uitvoeren op de weg (jwt_force, master_burst).",
+    "category": "Security",
+    "status": "completed",
+    "priority": "Medium"
+  },
+  {
+    "id": "td3",
+    "title": "Solana Bot Live Trading Mainnet",
+    "desc": "Transacties direct sturen naar Solana Mainnet (verlaat dry-run).",
+    "category": "Trading",
+    "status": "completed",
+    "priority": "High"
+  },
+  {
+    "id": "td4",
+    "title": "Whisper Voice Integration",
+    "desc": "Lokale spraak-naar-tekst verwerking via Whisper API.",
+    "category": "AI Core",
+    "status": "completed",
+    "priority": "Low"
+  },
+  {
+    "id": "td5",
+    "title": "Discovery Engine API Billing Link",
+    "desc": "Discovery Engine API activeren door billing te koppelen aan GCP.",
+    "category": "GCP Link",
+    "status": "completed",
+    "priority": "High"
+  },
+  {
+    "id": "td6",
+    "title": "S Pen AI Vision Parsing",
+    "desc": "Handschrift-naar-code OCR/Vision model via Vertex API.",
+    "category": "S Pen",
+    "status": "completed",
+    "priority": "Medium"
+  },
+  {
+    "id": "td7",
+    "title": "Open Source AI Agency",
+    "desc": "Setup Chatwoot, n8n, Flowise en Ollama VPS infrastructuur voor het klonen van AI werknemers ($299/mnd model).",
+    "category": "Business",
+    "status": "completed",
+    "priority": "High"
+  },
+  {
+    "id": "td8",
+    "title": "Autonomous QA Guardian Agents",
+    "desc": "Implementeer self-healing QA agents die logs monitoren en autonoom patches voorstellen via LLM (Agent 3).",
+    "category": "OrionX",
+    "status": "completed",
+    "priority": "High"
+  },
+  {
+    "id": "td9",
+    "title": "Node.js Monolith Migration",
+    "desc": "Stapsgewijs migreren van alle Python API-endpoints (serve_dashboard.py) naar de Node.js server.js backend voor maximale lokaal geheugen efficiëntie.",
+    "category": "OrionX",
+    "status": "completed",
+    "priority": "Medium"
+  },
+  {
+    "id": "td10",
+    "title": "Omni-Swarm Architecture",
+    "desc": "Koppel de Agentic frameworks (Antigravity, OpenClaw, Hermes, Pi, Claude Code, Codex, Agent Zero) als autonome werknemers aan de server.js orchestrator.",
+    "category": "AGI Core",
+    "status": "completed",
+    "priority": "High"
+  }
+]

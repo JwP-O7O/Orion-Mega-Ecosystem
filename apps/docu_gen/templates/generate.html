@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Document{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <h1 class="text-center" style="margin-bottom: 2rem;">Nieuw Betaalbewijs / Document</h1>
+
+    <div class="glass-panel" style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+            <div class="form-group">
+                <label for="doc_type">Type Document</label>
+                <select id="doc_type" name="doc_type" required onchange="toggleBankSelect()">
+                    <option value="" disabled selected>Kies een type...</option>
+                    <option value="receipt" {% if doc_type=='receipt' %}selected{% endif %}>Bank Betaalbewijs</option>
+                    <option value="invoice" {% if doc_type=='invoice' %}selected{% endif %}>Factuur</option>
+                    <option value="letter" {% if doc_type=='letter' %}selected{% endif %}>Brief</option>
+                    <option value="report" {% if doc_type=='report' %}selected{% endif %}>Rapport</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="bank-select-container" style="display:none;">
+                <label for="bank_style">Kies Bank Stijl</label>
+                <select id="bank_style" name="bank_style">
+                    <option value="ing">ING Bank</option>
+                    <option value="abn">ABN AMRO</option>
+                    <option value="rabo">Rabobank</option>
+                    <option value="generic">Algemeen</option>
+                </select>
+                <small class="text-muted">Selecteer de bankstijl voor de opmaak.</small>
+            </div>
+
+            <!-- AI Section -->
+            <div class="glass-panel"
+                style="padding: 1.5rem; margin-bottom: 2rem; background: hsla(220, 30%, 20%, 0.3);">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--color-secondary);">✨ AI Assistant
+                    (Optioneel)</h3>
+                <div class="form-group">
+                    <label for="ai_prompt">Omschrijf de transactie:</label>
+                    <input type="text" id="ai_prompt" name="ai_prompt" value="{{ ai_prompt }}"
+                        placeholder="Bijv: Overboeking aan J. Janssen van €250 voor Huur">
+                </div>
+                <button type="submit" name="action" value="ai_generate" class="btn btn-secondary btn-sm">
+                    Genereer Concept
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Titel / Omschrijving</label>
+                <input type="text" id="title" name="title" value="{{ title }}" placeholder="Betaalbewijs Huur" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Details (Eén per regel, formaat: 'Sleutel: Waarde')</label>
+                <textarea id="content" name="content"
+                    placeholder="Bedrag: € 100,00&#10;Naam: J. Oud&#10;Van Rekening: NL99INGB...&#10;Ontvanger: P. Nieuw&#10;Naar Rekening: NL01ABNA..."
+                    required>{{ content }}</textarea>
+                <small class="text-muted">Gebruik specifieke sleutels: Bedrag, Naam, Van Rekening, Ontvanger, Naar
+                    Rekening, Omschrijving.</small>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" name="action" value="create" class="btn btn-primary" style="min-width: 200px;">
+                    Download PDF
+                </button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="margin-left: 1rem;">Annuleren</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleBankSelect() {
+        var typeSelect = document.getElementById('doc_type');
+        var bankDiv = document.getElementById('bank-select-container');
+        if (typeSelect.value === 'receipt') {
+            bankDiv.style.display = 'block';
+        } else {
+            bankDiv.style.display = 'none';
+            document.getElementById('bank_style').value = 'generic';
+        }
+    }
+    // Run on load
+    window.onload = toggleBankSelect;
+</script>
+{% endblock %}

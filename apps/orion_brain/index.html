@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORION AI</title>
+
+<style>
+body {
+background:#0b0b0b;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+#chat {
+height:60vh;
+overflow:auto;
+background:#151515;
+border-radius:12px;
+padding:15px;
+}
+
+.msg {
+margin:10px;
+padding:10px;
+border-radius:8px;
+}
+
+.user {
+background:#333;
+text-align:right;
+}
+
+.orion {
+background:#222;
+}
+
+input {
+width:70%;
+padding:12px;
+}
+
+button {
+padding:12px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧠 ORION</h1>
+
+<div id="chat">
+<div class="msg orion">
+ORION: Online. Mijn AI-kern is actief.
+</div>
+</div>
+
+<input id="input" placeholder="Vraag ORION iets...">
+<button onclick="send()">Stuur</button>
+
+
+<script>
+
+const SERVER =
+"https://orion-ai-2bkw.onrender.com";
+
+
+async function send(){
+
+let input=document.getElementById("input");
+let chat=document.getElementById("chat");
+
+let message=input.value.trim();
+
+if(!message) return;
+
+
+chat.innerHTML +=
+"<div class='msg user'>Jij: "+message+"</div>";
+
+input.value="";
+
+
+chat.innerHTML +=
+"<div class='msg orion'>ORION: Denken...</div>";
+
+
+try {
+
+let response = await fetch(
+SERVER + "/chat",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+message:message
+})
+}
+);
+
+
+let data = await response.json();
+
+
+chat.innerHTML +=
+"<div class='msg orion'>ORION: "
++ data.answer +
+"</div>";
+
+
+}
+
+catch(error){
+
+chat.innerHTML +=
+"<div class='msg orion'>ORION: Verbinding mislukt.</div>";
+
+}
+
+
+chat.scrollTop=chat.scrollHeight;
+
+}
+
+</script>
+
+</body>
+</html>
